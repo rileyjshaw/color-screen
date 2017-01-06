@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Color picker and conversion tool</title>
+	<style>
+		@font-face {
+			font-family: "Baloo";
+			src: url("Baloo.ttf") format("truetype");
+		}
+		body {
+			color: rgba(0, 0, 0, 0.5);
+			font: 36px Baloo, sans-serif;
+			text-transform: lowercase;
+		}
+		body.dark {
+			color: rgba(255, 255, 255, 0.5);
+		}
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0.4em 0.75em;
+		}
+		li {
+			padding: 0.2em 0;
+		}
+		input {
+			background: transparent;
+			border: 0;
+			color: inherit;
+			display: inline;
+			font: inherit;
+			text-align: center;
+			text-transform: inherit;
+			width: 3em;
+		}
+		.hex input {
+			text-align: left;
+			width: 5em;
+		}
+	</style>
+</head>
+<body>
+	<ul>
+		<li class="hex">#<input type="text" /></li>
+		<li class="hsl">
+			hsl(
+				<input type="number" />,
+				<input type="number" max="100" />%,
+				<input type="number" max="100" />%
+			)
+		</li>
+		<li class="rgb">
+			rgb(
+				<input type="number" step="any" />,
+				<input type="number" step="any" />,
+				<input type="number" step="any" />
+			)
+		</li>
+	</ul>
+	<script src="tinycolor-min.js"></script>
+	<script>
+		const {body} = document;
+		const hexInputs = document.querySelectorAll('.hex input');
+		const hslInputs = document.querySelectorAll('.hsl input');
+		const rgbInputs = document.querySelectorAll('.rgb input');
+
+		hexInputs[0].onchange = e => update(tinycolor(e.target.value));
+
+		Array.from(hslInputs).forEach(input => input.onchange = () => {
+			update(tinycolor({
+				h: hslInputs[0].value,
+				s: hslInputs[1].value / 100,
+				l: hslInputs[2].value / 100,
+			}));
+		});
+
+		Array.from(rgbInputs).forEach(input => input.onchange = () => {
+			update(tinycolor({
+				r: rgbInputs[0].value,
+				g: rgbInputs[1].value,
+				b: rgbInputs[2].value,
+			}));
+		});
+
+		function update (color) {
+			if (!color.isValid()) return;
+
+			const hsl = color.toHsl();
+			const rgb = color.toRgb();
+
+			hexInputs[0].value = color.toHex();
+
+			[hsl.h, hsl.s, hsl.l].forEach(
+				(val, i) => hslInputs[i].value = Math.round(i ? val * 100 : val));
+
+			[rgb.r, rgb.g, rgb.b].forEach(
+				(val, i) => rgbInputs[i].value = val);
+
+			body.className = color.isLight() ? 'light' : 'dark';
+			document.title = body.style.background = color.toString();
+		}
+
+		update(tinycolor('#ffa385'));
+	</script>
+</body>
+</html>
