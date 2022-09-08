@@ -48,19 +48,20 @@
 		<li class="hex">#<input type="text" /></li>
 		<li class="hsl">
 			hsl(
-				<input type="number" />,
-				<input type="number" max="100" />%,
-				<input type="number" max="100" />%
+				<input type="number" min="0" />,
+				<input type="number" min="0" max="100" />%,
+				<input type="number" min="0" max="100" />%
 			)
 		</li>
 		<li class="rgb">
 			rgb(
-				<input type="number" step="any" />,
-				<input type="number" step="any" />,
-				<input type="number" step="any" />
+				<input type="number" min="0" max="255" />,
+				<input type="number" min="0" max="255" />,
+				<input type="number" min="0" max="255" />
 			)
 		</li>
 	</ul>
+	<!-- TODO: Use color.js instead (https://github.com/LeaVerou/color.js) to enable LCH, etc. -->
 	<script src="tinycolor-min.js"></script>
 	<script>
 		const {body} = document;
